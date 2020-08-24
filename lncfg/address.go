@@ -47,6 +47,10 @@ func NormalizeAddresses(addrs []string, defaultPort string,
 	return result, nil
 }
 
+func IsIPv6(address string) bool {
+    return strings.Count(address, ":") >= 2
+}
+
 // EnforceSafeAuthentication enforces "safe" authentication taking into account
 // the interfaces that the RPC servers are listening on, and if macaroons are
 // activated or not. To protect users from using dangerous config combinations,
@@ -177,7 +181,7 @@ func ParseAddressString(strAddress string, defaultPort string,
 		// Otherwise, we'll attempt the resolve the host. The Tor
 		// resolver is unable to resolve local addresses, so we'll use
 		// the system resolver instead.
-		if rawHost == "" || IsLoopback(rawHost) {
+		if rawHost == "" || IsLoopback(rawHost) || IsIPv6(rawHost) {
 			return net.ResolveTCPAddr("tcp", addrWithPort)
 		}
 
